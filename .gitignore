@@ -1,0 +1,6 @@
+*.jtl
+*.log
+target
+.project
+.classpath
+.settings
