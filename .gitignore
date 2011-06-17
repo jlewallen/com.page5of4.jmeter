@@ -1,7 +1,9 @@
 *.ftl
 *.jtl
 *.log
+*.png
 target
 .project
 .classpath
 .settings
+.DS_Store

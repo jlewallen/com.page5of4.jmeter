@@ -15,6 +15,14 @@ public class JolokiaSampleResult extends SampleResult {
       return responses;
    }
 
+   public void setResponses(List<J4pReadResponse> responses) {
+      this.responses = responses;
+   }
+
+   public JolokiaSampleResult() {
+
+   }
+
    public JolokiaSampleResult(List<J4pReadResponse> responses) {
       super();
       this.responses = responses;

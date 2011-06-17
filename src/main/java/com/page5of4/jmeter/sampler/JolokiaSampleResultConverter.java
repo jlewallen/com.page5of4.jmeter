@@ -1,11 +1,13 @@
 package com.page5of4.jmeter.sampler;
 
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.management.ObjectName;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.jmeter.save.converters.ConversionHelp;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.jolokia.client.request.J4pReadResponse;
@@ -29,6 +31,8 @@ public class JolokiaSampleResultConverter extends AbstractCollectionConverter {
 
    private static final String RESPONSE_NODE_NAME = "response";
 
+   private static final String DOMAIN_ATTRIBUTE_NAME = "domain";
+
    public JolokiaSampleResultConverter(Mapper mapper) {
       super(mapper);
    }
@@ -46,6 +50,7 @@ public class JolokiaSampleResultConverter extends AbstractCollectionConverter {
       for(J4pReadResponse response : sample.getResponses()) {
          ObjectName objectName = response.getRequest().getObjectName();
          writer.startNode(RESPONSE_NODE_NAME);
+         setAttribute(writer, DOMAIN_ATTRIBUTE_NAME, objectName.getDomain());
          for(Map.Entry<String, String> entry : objectName.getKeyPropertyList().entrySet()) {
             setAttribute(writer, entry.getKey(), entry.getValue());
          }
@@ -68,7 +73,33 @@ public class JolokiaSampleResultConverter extends AbstractCollectionConverter {
 
    @Override
    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-      throw new NotImplementedException();
+      JolokiaSampleResult res = (JolokiaSampleResult)createCollection(context.getRequiredType());
+      retrieveAttributes(reader, context, res);
+      while(reader.hasMoreChildren()) {
+         reader.moveDown();
+         Object subItem = readItem(reader, context, res);
+         retrieveResponses(reader, context, res);
+         reader.moveUp();
+      }
+      return res;
    }
 
+   private void retrieveResponses(HierarchicalStreamReader reader, UnmarshallingContext context, JolokiaSampleResult res) {
+
+   }
+
+   private void retrieveAttributes(HierarchicalStreamReader reader, UnmarshallingContext context, JolokiaSampleResult res) {
+      try {
+         String domain = ConversionHelp.decode(reader.getAttribute(DOMAIN_ATTRIBUTE_NAME));
+         Hashtable<String, String> keys = new Hashtable<String, String>();
+         for(String attributeName : (String[])IteratorUtils.toArray(reader.getAttributeNames(), String.class)) {
+            String value = ConversionHelp.decode(reader.getAttribute(attributeName));
+            keys.put(attributeName, value);
+         }
+         ObjectName name = new ObjectName(domain, keys);
+      }
+      catch(Exception e) {
+         throw new RuntimeException("Error Parsing", e);
+      }
+   }
 }
