@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
@@ -15,7 +15,7 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">0</stringProp>
+          <stringProp name="LoopController.loops">10</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -30,7 +30,7 @@
           <stringProp name="ConstantTimer.delay">500</stringProp>
         </ConstantTimer>
         <hashTree/>
-        <com.page5of4.jmeter.sampler.JolokiaSampler guiclass="com.page5of4.jmeter.sampler.gui.JolokiaSamplerGui" testclass="com.page5of4.jmeter.sampler.JolokiaSampler" testname="Jolokia Diagnostic Sampler" enabled="true">
+        <com.page5of4.jmeter.sampler.JolokiaSampler guiclass="com.page5of4.jmeter.sampler.gui.JolokiaSamplerGui" testclass="com.page5of4.jmeter.sampler.JolokiaSampler" testname="jolokia query" enabled="true">
           <stringProp name="URL">http://127.0.0.1:8080/jolokia/</stringProp>
           <collectionProp name="QUERIES">
             <collectionProp name="1456705742">
