@@ -6,18 +6,10 @@ import java.io.FileInputStream;
 import org.apache.jmeter.reporters.ResultCollectorHelper;
 import org.apache.jmeter.save.SaveService;
 
-/**
- * Utility to invoke JMeter API's to parse files
- * 
- * @author DS
- */
 public class XStreamJTLParser {
    private final File f;
    private final ResultCollectorHelper rch;
 
-   /**
-    * Unfortunately leaks ResultCollectorHelper, but atleast encapsulates SaveService!
-    */
    public XStreamJTLParser(File f, ResultCollectorHelper rch) {
       this.f = f;
       this.rch = rch;

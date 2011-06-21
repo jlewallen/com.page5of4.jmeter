@@ -33,6 +33,8 @@ public class JolokiaSampleResultConverter extends AbstractCollectionConverter {
 
    private static final String DOMAIN_ATTRIBUTE_NAME = "domain";
 
+   private static final String OBJECT_NAME_ATTRIBUTE_NAME = "domain";
+
    public JolokiaSampleResultConverter(Mapper mapper) {
       super(mapper);
    }
@@ -51,6 +53,7 @@ public class JolokiaSampleResultConverter extends AbstractCollectionConverter {
          ObjectName objectName = response.getRequest().getObjectName();
          writer.startNode(RESPONSE_NODE_NAME);
          setAttribute(writer, DOMAIN_ATTRIBUTE_NAME, objectName.getDomain());
+         setAttribute(writer, OBJECT_NAME_ATTRIBUTE_NAME, objectName.getCanonicalName());
          for(Map.Entry<String, String> entry : objectName.getKeyPropertyList().entrySet()) {
             setAttribute(writer, entry.getKey(), entry.getValue());
          }
