@@ -3,6 +3,8 @@ package com.page5of4.jmeter.charting;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +41,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 import org.junit.Test;
+
+import com.page5of4.jmeter.sampler.JolokiaSampleResult;
 
 public class ChartTest {
 
@@ -182,8 +186,7 @@ public class ChartTest {
       }
    }
 
-   public static class SimpleCollector implements Visualizer {
-
+   public static class SimpleHTTPCollector implements Visualizer {
       private List<HTTPSampleResult> samples = new ArrayList<HTTPSampleResult>();
 
       public List<HTTPSampleResult> getSamples() {
@@ -201,15 +204,33 @@ public class ChartTest {
       }
    }
 
+   public static class JolokiaResultCollector implements Visualizer {
+      private List<JolokiaSampleResult> samples = new ArrayList<JolokiaSampleResult>();
+
+      public List<JolokiaSampleResult> getSamples() {
+         return samples;
+      }
+
+      @Override
+      public void add(SampleResult sr) {
+         samples.add((JolokiaSampleResult)sr);
+      }
+
+      @Override
+      public boolean isStats() {
+         return false;
+      }
+   }
+
    @Test
    public void when_generating_a_chart() throws Exception {
       JMeterUtils.getProperties("jakarta-jmeter-2.4/bin/jmeter.properties");
       JMeterUtils.setJMeterHome("jakarta-jmeter-2.4");
       {
-         SimpleCollector v = new SimpleCollector();
+         SimpleHTTPCollector v = new SimpleHTTPCollector();
          ResultCollector rc = new ResultCollector();
          ResultCollectorHelper rch = new ResultCollectorHelper(rc, v);
-         XStreamJTLParser p = new XStreamJTLParser(new File("profile-users-gr.jtl"), rch);
+         XStreamJTLParser p = new XStreamJTLParser(new File("/Users/jlewallen/Dropbox/profile-users-gr.jtl"), rch);
          p.parse();
 
          Map<String, List<HTTPSampleResult>> labels = new HashMap<String, List<HTTPSampleResult>>();
@@ -293,17 +314,36 @@ public class ChartTest {
             }
             index++;
          }
+
+         writeIndex();
       }
 
-      /*
       {
-         SimpleVisualizer v = new SimpleVisualizer();
+         JolokiaResultCollector v = new JolokiaResultCollector();
          ResultCollector rc = new ResultCollector();
          ResultCollectorHelper rch = new ResultCollectorHelper(rc, v);
          XStreamJTLParser p = new XStreamJTLParser(new File("/Users/jlewallen/Dropbox/profile-users-jolokia.jtl"), rch);
          p.parse();
       }
-      */
+
+   }
+
+   public void writeIndex() throws IOException {
+      FileWriter writer = new FileWriter("index.html", false);
+      File[] files = new File(".").listFiles(new FilenameFilter() {
+         @Override
+         public boolean accept(File dir, String name) {
+            return name.endsWith(".png");
+         }
+      });
+      for(File file : files) {
+         writer.append("<div>");
+         writer.append("<img src='");
+         writer.append(file.getName());
+         writer.append("'>");
+         writer.append("</div>");
+      }
+      writer.close();
 
    }
 
